@@ -26,5 +26,8 @@ namespace WS_Odisea
 
         [OperationContract]
         Person getUser(string username, string pass);
+
+        [OperationContract]
+        Contact addContact(string usuario, string nombre, string mail, string telefono);
     }
 }

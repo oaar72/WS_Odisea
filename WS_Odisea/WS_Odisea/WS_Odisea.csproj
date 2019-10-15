@@ -67,6 +67,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Contact.cs" />
     <Compile Include="Network\Connection.cs" />
     <Compile Include="Data\Person.cs" />
     <Compile Include="WSOdisea.svc.cs">

@@ -168,5 +168,53 @@ namespace WS_Odisea
 
             return user;
         }
+
+        [WebMethod]
+        public Contact addContact(string usuario, string nombre, string mail, string telefono)
+        {
+            Contact contacto = new Contact();
+
+            Connection.Connection conn = new Connection.Connection();
+            string conexion = conn.getConnectionString();
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+
+            SqlCommand cmd = new SqlCommand("addPersona", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add(new SqlParameter("@usuario", usuario));
+            cmd.Parameters.Add(new SqlParameter("@nombre", nombre));
+            cmd.Parameters.Add(new SqlParameter("@mail", mail));
+            cmd.Parameters.Add(new SqlParameter("@telefono", telefono));
+
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            try
+            {
+                if (dr.Read())
+                {
+                    if (dr["ERROR"].ToString() == "")
+                    {
+                        contacto.cve_usuario = dr[""].ToString();
+                        contacto.nombre      = dr["nombre"].ToString();
+                        contacto.telefono    = dr["telefono"].ToString();
+                        contacto.email       = dr["email"].ToString();
+                        contacto.mensaje     = " ";
+                    }
+                    else
+                    {
+                        contacto.mensaje = dr["ERROR"].ToString();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                contacto.mensaje = "Error al invocar SP (addContact). " + e.StackTrace;
+            }
+
+            return contacto;
+        }
     }
 }
