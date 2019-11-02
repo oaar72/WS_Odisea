@@ -73,7 +73,7 @@ namespace WS_Odisea
         }
 
         [WebMethod]
-        public Person addUser(string mail, string pass, string nombre, string paterno, string phone)
+        public Person addUser(string mail, string pass, string nombre, string paterno, string phone, string token)
         {
             Connection.Connection conn = new Connection.Connection();
             string conexion = conn.getConnectionString();
@@ -90,7 +90,8 @@ namespace WS_Odisea
             cmd.Parameters.Add(new SqlParameter("@codUser", mail));
             cmd.Parameters.Add(new SqlParameter("@password", pass));
             cmd.Parameters.Add(new SqlParameter("@phone", phone));
-            
+            cmd.Parameters.Add(new SqlParameter("@token", token));
+
             SqlDataReader dr = cmd.ExecuteReader();
 
             Person user = new Person();
@@ -106,6 +107,7 @@ namespace WS_Odisea
                         user.paterno = dr["paterno"].ToString();
                         user.codUser = dr["cod_usuario"].ToString();
                         user.telefono = dr["telefono"].ToString();
+                        user.token = dr["token"].ToString();
                         user.mensaje = " ";
                     }
                     else
@@ -153,6 +155,7 @@ namespace WS_Odisea
                         user.paterno = dr["paterno"].ToString();
                         user.codUser = dr["cod_usuario"].ToString();
                         user.telefono = dr["telefono"].ToString();
+                        user.token = dr["token"].ToString();
                         user.mensaje = " ";
                     }
                     else
