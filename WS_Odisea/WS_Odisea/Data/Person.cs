@@ -22,19 +22,22 @@ namespace WS_Odisea.Data
         public string telefono { get; set; }
         [DataMember]
         public string mensaje { get; set; }
+        [DataMember]
+        public string token { get; set; }
 
         public Person()
         {
 
         }
 
-        public Person(string codUser, string nombre, string paterno, string materno, string numero, string mensaje)
+        public Person(string codUser, string nombre, string paterno, string materno, string numero, string mensaje, string token)
         {
             this.codUser = codUser;
             this.nombre = nombre;
             this.paterno = paterno;
             this.materno = materno;
             this.telefono = numero;
+            this.token = token;
         }
     }
 }
