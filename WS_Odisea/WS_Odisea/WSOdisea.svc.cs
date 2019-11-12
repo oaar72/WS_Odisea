@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.ServiceModel;
@@ -216,5 +217,44 @@ namespace WS_Odisea
 
             return contacto;
         }
+    
+        [WebMethod]
+
+        public List<string> traerGrupos()
+        {
+            List<string> Resultado = new List<string>();
+
+            Connection.Connection conn = new Connection.Connection();
+            string conexion = conn.getConnectionString();
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+
+            SqlCommand cmd = new SqlCommand("getGrupos", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            
+            SqlDataReader dr = cmd.ExecuteReader();
+            int cveClasificacion = 0;
+            string descripcion = "";
+
+            if(dr.Read())
+            {
+                   
+                cveClasificacion = int.Parse(dr["cve_clasificacion"].ToString());
+                descripcion = dr["descripcion"].ToString();
+
+                Resultado.Add(descripcion);
+            }
+            else
+            {
+                Resultado.Add("Error");
+            }
+
+
+
+            return Resultado;
+        }
+    
     }
 }
