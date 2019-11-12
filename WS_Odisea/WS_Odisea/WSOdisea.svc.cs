@@ -36,10 +36,10 @@ namespace WS_Odisea
                 resultado = "Conexion exitosa";
                 con.Close();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                resultado = "Error en la conexión " + e.StackTrace ;
-            }            
+                resultado = "Error en la conexión " + e.StackTrace;
+            }
 
             return resultado;
         }
@@ -65,10 +65,10 @@ namespace WS_Odisea
             if (dr.Read())
             {
                 user.idPersona = long.Parse(dr["cve_usuario"].ToString());
-                user.codUser   = dr["cod_usuario"].ToString();
-                user.paterno   = dr["paterno"].ToString();
-                user.nombre    = dr["nombre"].ToString();
-                user.telefono  = dr["telefono"].ToString();
+                user.codUser = dr["cod_usuario"].ToString();
+                user.paterno = dr["paterno"].ToString();
+                user.nombre = dr["nombre"].ToString();
+                user.telefono = dr["telefono"].ToString();
             }
             return user;
         }
@@ -115,7 +115,7 @@ namespace WS_Odisea
                     {
                         user.mensaje = dr["ERROR"].ToString();
                     }
-                    
+
                 }
             }
             catch (Exception e)
@@ -128,7 +128,7 @@ namespace WS_Odisea
 
         [WebMethod]
         public Person getUser(string username, string pass)
-        { 
+        {
             Connection.Connection conn = new Connection.Connection();
             string conexion = conn.getConnectionString();
 
@@ -202,10 +202,10 @@ namespace WS_Odisea
                     if (dr["ERROR"].ToString() == "")
                     {
                         contacto.cve_usuario = dr[""].ToString();
-                        contacto.nombre      = dr["nombre"].ToString();
-                        contacto.telefono    = dr["telefono"].ToString();
-                        contacto.email       = dr["email"].ToString();
-                        contacto.mensaje     = " ";
+                        contacto.nombre = dr["nombre"].ToString();
+                        contacto.telefono = dr["telefono"].ToString();
+                        contacto.email = dr["email"].ToString();
+                        contacto.mensaje = " ";
                     }
                     else
                     {
@@ -220,5 +220,75 @@ namespace WS_Odisea
 
             return contacto;
         }
+
+        [WebMethod]
+        public Dato addDatoMedico(string valor, string descripcion, string usuario)
+        {
+            Dato dato = new Dato();
+
+            Connection.Connection conn = new Connection.Connection();
+            string conexion = conn.getConnectionString();
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+
+            SqlCommand cmd = new SqlCommand("addDatoMedico", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add(new SqlParameter("@Usuario", usuario));
+            cmd.Parameters.Add(new SqlParameter("@Descripcion", descripcion));
+            cmd.Parameters.Add(new SqlParameter("@Valor", valor));
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                dato.mensaje = "Error al invocar SP (addDatoMedico). " + e.StackTrace;
+            }
+
+            return dato;
+        }
+
+        [WebMethod]
+
+        public List<string> traerGrupos()
+        {
+            List<string> Resultado = new List<string>();
+
+            Connection.Connection conn = new Connection.Connection();
+            string conexion = conn.getConnectionString();
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+
+            SqlCommand cmd = new SqlCommand("getGrupos", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            SqlDataReader dr = cmd.ExecuteReader();
+            int cveClasificacion = 0;
+            string descripcion = "";
+
+            if (dr.Read())
+            {
+
+                cveClasificacion = int.Parse(dr["cve_clasificacion"].ToString());
+                descripcion = dr["descripcion"].ToString();
+
+                Resultado.Add(descripcion);
+            }
+            else
+            {
+                Resultado.Add("Error");
+            }
+
+            return Resultado;
+        }
+
     }
+
+}
 }
