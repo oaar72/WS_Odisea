@@ -22,12 +22,15 @@ namespace WS_Odisea
         Person getPersona(string codUser);
 
         [OperationContract]
-        Person addUser(string mail, string pass, string nombre, string paterno, string phone);
+        Person addUser(string mail, string pass, string nombre, string paterno, string phone, string token);
 
         [OperationContract]
         Person getUser(string username, string pass);
 
         [OperationContract]
         Contact addContact(string usuario, string nombre, string mail, string telefono);
+
+        [OperationContract]
+        Dato addDatoMedico(string valor, string descripcion, string usuario);
     }
 }

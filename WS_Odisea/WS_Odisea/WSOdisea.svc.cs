@@ -219,5 +219,36 @@ namespace WS_Odisea
 
             return contacto;
         }
+
+        [WebMethod]
+        public Dato addDatoMedico(string valor, string descripcion, string usuario)
+        {
+            Dato dato = new Dato();
+
+            Connection.Connection conn = new Connection.Connection();
+            string conexion = conn.getConnectionString();
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+
+            SqlCommand cmd = new SqlCommand("addDatoMedico", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add(new SqlParameter("@Usuario", usuario));
+            cmd.Parameters.Add(new SqlParameter("@Descripcion", descripcion));
+            cmd.Parameters.Add(new SqlParameter("@Valor", valor));
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                dato.mensaje = "Error al invocar SP (addDatoMedico). " + e.StackTrace;
+            }
+
+            return dato;
+        }
     }
 }
