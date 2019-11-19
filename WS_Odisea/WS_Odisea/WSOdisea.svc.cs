@@ -316,7 +316,7 @@ namespace WS_Odisea
 
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             pass = new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
-                    
+
             return pass;
         }
 
@@ -366,12 +366,85 @@ namespace WS_Odisea
                     cmd.ExecuteNonQuery();
                     mensaje = "Mensaje enviado, " + pass;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     mensaje += e.StackTrace;
                 }
             }
             return mensaje;
+        }
+
+        [WebMethod]
+        public Person updatePersona(string nombre, string paterno, string numero, string codUser)
+        {
+            Connection.Connection conn = new Connection.Connection();
+            string conexion = conn.getConnectionString();
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+
+            SqlCommand cmd = new SqlCommand("updatePersona", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add(new SqlParameter("@nombre", nombre));
+            cmd.Parameters.Add(new SqlParameter("@paterno", paterno));
+            cmd.Parameters.Add(new SqlParameter("@codUser", codUser));
+            cmd.Parameters.Add(new SqlParameter("@phone", numero));
+
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            Person user = new Person();
+
+            try
+            {
+                if (dr.Read())
+                {
+                    if (dr["ERROR"].ToString() == "")
+                    {
+                        user.idPersona = long.Parse(dr["cve_usuario"].ToString());
+                        user.nombre = dr["nombre"].ToString();
+                        user.paterno = dr["paterno"].ToString();
+                        user.codUser = dr["cod_usuario"].ToString();
+                        user.telefono = dr["telefono"].ToString();
+                        user.mensaje = " ";
+                    }
+                    else
+                    {
+                        user.mensaje = dr["ERROR"].ToString();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                user.mensaje = "Error al invocar SP (updateUser). " + e.StackTrace;
+            }
+
+            return user;
+        }
+
+        [WebMethod]
+        public void deletePersona(string codUser)
+        {
+            Connection.Connection conn = new Connection.Connection();
+            string conexion = conn.getConnectionString();
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+
+            SqlCommand cmd  = new SqlCommand("deletePersona", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add(new SqlParameter("@codUser", codUser));
+
+            try
+            {
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                
+            }
         }
     }
 }

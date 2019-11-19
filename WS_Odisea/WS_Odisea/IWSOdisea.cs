@@ -41,5 +41,11 @@ namespace WS_Odisea
 
         [OperationContract]
         string recoverPassword(string mail);
+
+        [OperationContract]
+        Person updatePersona(string nombre, string paterno, string numero, string codUser);
+
+        [OperationContract]
+        void deletePersona(string codUser);
     }
 }
