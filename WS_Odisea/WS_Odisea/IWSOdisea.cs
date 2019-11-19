@@ -31,6 +31,15 @@ namespace WS_Odisea
         Contact addContact(string usuario, string nombre, string mail, string telefono);
 
         [OperationContract]
+        List<string> getContactos(string codUser);
+
+        [OperationContract]
         Dato addDatoMedico(string valor, string descripcion, string usuario);
+
+        [OperationContract]
+        List<string> traerGrupos();
+
+        [OperationContract]
+        string recoverPassword(string mail);
     }
 }

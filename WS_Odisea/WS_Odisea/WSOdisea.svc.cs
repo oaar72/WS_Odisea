@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.ServiceModel;
 using System.Web.Services;
 using WS_Odisea.Data;
@@ -222,6 +223,32 @@ namespace WS_Odisea
         }
 
         [WebMethod]
+        public List<string> getContactos(string codUser)
+        {
+            List<string> contactos = new List<string>();
+
+            Connection.Connection conn = new Connection.Connection();
+
+            string conexion = conn.getConnectionString();
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+            SqlCommand cmd = new SqlCommand("getContact", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add(new SqlParameter("@codUser", codUser));
+
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            while (dr.Read())
+            {
+                contactos.Add(dr["nombre"].ToString());
+            }
+            return contactos;
+        }
+
+        [WebMethod]
         public Dato addDatoMedico(string valor, string descripcion, string usuario)
         {
             Dato dato = new Dato();
@@ -253,7 +280,6 @@ namespace WS_Odisea
         }
 
         [WebMethod]
-
         public List<string> traerGrupos()
         {
             List<string> Resultado = new List<string>();
@@ -272,23 +298,80 @@ namespace WS_Odisea
             int cveClasificacion = 0;
             string descripcion = "";
 
-            if (dr.Read())
+            while (dr.Read())
             {
-
                 cveClasificacion = int.Parse(dr["cve_clasificacion"].ToString());
                 descripcion = dr["descripcion"].ToString();
 
                 Resultado.Add(descripcion);
             }
-            else
-            {
-                Resultado.Add("Error");
-            }
 
             return Resultado;
         }
 
-    }
+        private string generateProvitionalPass(int length)
+        {
+            string pass = "";
+            Random random = new Random();
 
-}
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            pass = new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+                    
+            return pass;
+        }
+
+        [WebMethod]
+        public string recoverPassword(string mail)
+        {
+            string mensaje = "";
+            long cveUsuario = 0;
+
+            Connection.Connection conn = new Connection.Connection();
+
+            string conexion = conn.getConnectionString();
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+            SqlCommand cmd = new SqlCommand("getPersona", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add(new SqlParameter("@codUser", mail));
+
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            if (dr.Read())
+            {
+                cveUsuario = long.Parse(dr["cve_usuario"].ToString());
+            }
+
+            dr.Close();
+
+            if (cveUsuario == 0)
+            {
+                mensaje = "No se ha encontrado la dirección de correo electronico";
+            }
+            else
+            {
+                string pass = generateProvitionalPass(7);
+
+                cmd = new SqlCommand("setPass", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.Add(new SqlParameter("@pass", pass));
+                cmd.Parameters.Add(new SqlParameter("@codUser", mail));
+
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                    mensaje = "Mensaje enviado, " + pass;
+                }
+                catch(Exception e)
+                {
+                    mensaje += e.StackTrace;
+                }
+            }
+            return mensaje;
+        }
+    }
 }
