@@ -175,6 +175,48 @@ namespace WS_Odisea
         }
 
         [WebMethod]
+        public string getInfo(string codUser)
+        {
+            Connection.Connection conn = new Connection.Connection();
+            string conexion = conn.getConnectionString();
+            string informacion = "";
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+
+            SqlCommand cmd = new SqlCommand("getInfo", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add(new SqlParameter("@codUser", codUser));
+
+            SqlDataReader dr = cmd.ExecuteReader();
+            
+            try
+            {
+                while (dr.Read())
+                {
+                    if (dr["ERROR"].ToString() == "")
+                    {
+                        informacion += dr["Clasificacion"].ToString() + " ";
+                        informacion += dr["Dato"].ToString() + " ";
+                        informacion += dr["Valor"].ToString() + "| ";
+                    }
+                    else
+                    {
+                        informacion = dr["ERROR"].ToString();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                informacion = "Error al invocar SP (getInfo). " + e.StackTrace;
+            }
+
+            return informacion;
+        }
+
+        [WebMethod]
         public Contact addContact(string usuario, string nombre, string mail, string telefono,string descripcion)
         {
             Contact contacto = new Contact();
@@ -245,6 +287,36 @@ namespace WS_Odisea
             while (dr.Read())
             {
                 contactos.Add(dr["nombre"].ToString());
+            }
+            return contactos;
+        }
+
+        [WebMethod]
+        public List<Contact> getContacts(string codUser)
+        {
+            List<Contact> contactos = new List<Contact>();
+            Connection.Connection conn = new Connection.Connection();
+
+            string conexion = conn.getConnectionString();
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+            SqlCommand cmd = new SqlCommand("getContact", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add(new SqlParameter("@codUser", codUser));
+
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            while (dr.Read())
+            {
+                contactos.Add(new Contact()
+                {
+                    email = dr["email"].ToString(),
+                    nombre = dr["nombre"].ToString(),
+                    telefono = dr["telefono"].ToString()
+                });
             }
             return contactos;
         }

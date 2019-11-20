@@ -28,10 +28,16 @@ namespace WS_Odisea
         Person getUser(string username, string pass);
 
         [OperationContract]
+        string getInfo(string codUser);
+
+        [OperationContract]
         Contact addContact(string usuario, string nombre, string mail, string telefono, string descripcion);
 
         [OperationContract]
         List<string> getContactos(string codUser);
+
+        [OperationContract]
+        List<Contact> getContacts(string codUser);
 
         [OperationContract]
         Dato addDatoMedico(string valor, string descripcion, string usuario);
