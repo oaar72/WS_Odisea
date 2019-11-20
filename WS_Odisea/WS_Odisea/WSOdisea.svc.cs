@@ -175,7 +175,7 @@ namespace WS_Odisea
         }
 
         [WebMethod]
-        public Contact addContact(string usuario, string nombre, string mail, string telefono)
+        public Contact addContact(string usuario, string nombre, string mail, string telefono,string descripcion)
         {
             Contact contacto = new Contact();
 
@@ -186,13 +186,14 @@ namespace WS_Odisea
 
             con.Open();
 
-            SqlCommand cmd = new SqlCommand("addPersona", con);
+            SqlCommand cmd = new SqlCommand("addContact", con);
             cmd.CommandType = CommandType.StoredProcedure;
 
             cmd.Parameters.Add(new SqlParameter("@usuario", usuario));
             cmd.Parameters.Add(new SqlParameter("@nombre", nombre));
             cmd.Parameters.Add(new SqlParameter("@mail", mail));
             cmd.Parameters.Add(new SqlParameter("@telefono", telefono));
+            cmd.Parameters.Add(new SqlParameter("@descripcion", descripcion));
 
             SqlDataReader dr = cmd.ExecuteReader();
 
@@ -202,7 +203,7 @@ namespace WS_Odisea
                 {
                     if (dr["ERROR"].ToString() == "")
                     {
-                        contacto.cve_usuario = dr[""].ToString();
+                        //contacto.cve_usuario = dr[""].ToString();
                         contacto.nombre = dr["nombre"].ToString();
                         contacto.telefono = dr["telefono"].ToString();
                         contacto.email = dr["email"].ToString();
