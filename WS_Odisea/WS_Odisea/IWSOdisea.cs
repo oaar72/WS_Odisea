@@ -46,6 +46,9 @@ namespace WS_Odisea
         Person updatePersona(string nombre, string paterno, string numero, string codUser);
 
         [OperationContract]
+        void updatePass(string codUser, string pass1, string pass2);
+
+        [OperationContract]
         void deletePersona(string codUser);
     }
 }

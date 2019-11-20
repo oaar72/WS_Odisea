@@ -376,6 +376,26 @@ namespace WS_Odisea
         }
 
         [WebMethod]
+        public void updatePass(string codUser, string pass1, string pass2)
+        {
+            Connection.Connection conn = new Connection.Connection();
+            string conexion = conn.getConnectionString();
+
+            SqlConnection con = new SqlConnection(conexion);
+
+            con.Open();
+
+            SqlCommand cmd = new SqlCommand("updatePass", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.Add(new SqlParameter("@codUser", codUser));
+            cmd.Parameters.Add(new SqlParameter("@pass1", pass1));
+            cmd.Parameters.Add(new SqlParameter("@pass2", pass2));
+
+            cmd.ExecuteNonQuery();
+        }
+
+        [WebMethod]
         public Person updatePersona(string nombre, string paterno, string numero, string codUser)
         {
             Connection.Connection conn = new Connection.Connection();
